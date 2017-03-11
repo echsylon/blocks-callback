@@ -1,0 +1,11 @@
+apply plugin: 'com.github.kt3k.coveralls'
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/coverage/jacoco/jacoco.xml"
+}
+
+tasks.coveralls {
+    dependsOn ':library:jacoco'
+    onlyIf { System.env.'CIRCLECI' }
+}
+

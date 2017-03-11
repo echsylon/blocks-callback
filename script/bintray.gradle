@@ -1,0 +1,25 @@
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['library']
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'callback'
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/echsylon/blocks-callback/wiki'
+        issueTrackerUrl = 'https://github.com/echsylon/blocks-callback/issues'
+        vcsUrl = 'git@github.com:echsylon/blocks-callback.git'
+        githubRepo = 'echsylon/blocks-callback'
+
+        version {
+            name = android.defaultConfig.versionName
+            vcsTag = "v${android.defaultConfig.versionName}"
+            released = new Date()
+        }
+    }
+}
+
