@@ -176,7 +176,7 @@ private def getVersionFromLatestTag() {
         return '0 0 0 0'
     
     if (segments.size() == 3)
-        return version + ' 0'
+        return version + ' 1'
         
     if (segments.size() == 4) {
         segments[3] = segments[3].replaceAll("[^\\d]", "")
