@@ -62,6 +62,20 @@ public class JsonRequest extends FutureTask<String> implements Request<String> {
         super(callable);
     }
     
+    // FutureTask
+    @Override
+    protected void done() {
+        super.done();
+        try {
+            String json = get(); // Will throw on error
+            callbackManager.deliverSuccessOnMainThread(json);
+        } catch (InterruptedException | ExecutionException e) {
+            // DefaultCallbackManager will call any finish listeners internally.
+            callbackManager.deliverErrorOnMainThread(e.getCause());
+        }
+    }
+    
+    // Request
     @Override
     public Request<T> withSuccessListener(SuccessListener<T> listener) {
         callbackManager.addSuccessListener(listener);
