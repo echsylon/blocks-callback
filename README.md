@@ -96,4 +96,7 @@ public class JsonRequest extends FutureTask<String> implements Request<String> {
 }
 ```
 
-And the rest is just going to work by itself.
+## The `DefaultCallbackManager`
+The core of this library is the default `CallbackManager` implementation. The `Request` interface doesn't limit the  number of listeners you can attach to a request. The `DefaultCallbackManager` will keep track of and keep a reference to all listeners being added to it, but only until a result is delivered through it. Listeners added *after* a result is delivered (success or failure) will be called immediately and no reference will be kept.
+
+This "auto-release" is a desirable feature while any anonymous classes in Java (Android) will hold a reference to the class it's being created from. In practice this means that any and all of the lambda expressions passed in as a listener implementation from, say, an Activity, will force the Activity to stay in memory as long as the listeners themselves are "alive".
