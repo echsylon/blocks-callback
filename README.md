@@ -41,7 +41,7 @@ public class MyActivity extends AppCompatActivity {
 }
 ```
 
-And in order to achieve Nirvana you'll have to implement your custom task something like this:
+And in order to achieve Nirvana you'll have to implement your custom, reusable task something like this:
 
 ```java
 public class JsonRequest extends FutureTask<String> implements Request<String> {
