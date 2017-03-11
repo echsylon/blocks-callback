@@ -1,2 +1,2 @@
-[![CircleCI](https://circleci.com/gh/echsylon/blocks-callback.svg?style=shield)](https://circleci.com/gh/echsylon/blocks-callback) [![Download](https://api.bintray.com/packages/echsylon/maven/callback/images/download.svg)](https://bintray.com/echsylon/maven/callback/_latestVersion)
+[![CircleCI](https://circleci.com/gh/echsylon/blocks-callback.svg?style=shield)](https://circleci.com/gh/echsylon/blocks-callback)[![Coverage Status](https://coveralls.io/repos/github/echsylon/blocks-callback/badge.svg)](https://coveralls.io/github/echsylon/blocks-callback)[![Download](https://api.bintray.com/packages/echsylon/maven/callback/images/download.svg)](https://bintray.com/echsylon/maven/callback/_latestVersion)
 # blocks-callback
