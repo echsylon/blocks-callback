@@ -9,35 +9,22 @@ import java.util.concurrent.RejectedExecutionException;
 
 /**
  * This class implements the default behavior of a request. It interacts with a
- * shared executor service where all requests are being enqueued and executed
- * from. It also maintains a callback manager which will deliver the response
- * from this request to the caller.
+ * globally shared executor service in which all requests are being enqueued and
+ * executed from. The request is enqueued at creation (in the constructor).
  * <p>
- * NOTE! Any extending classes or direct consumers of this class MUST call the
- * {@link #enqueue(DefaultRequest)} method manually in order to have the request
- * enqueued and eventually executed.
+ * This class also maintains a private callback manager which will deliver the
+ * response from this request to the caller.
  */
 public class DefaultRequest<T> extends FutureTask<T> implements Request<T> {
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(5);
-    protected final DefaultCallbackManager<T> callbackManager;
+    private final DefaultCallbackManager<T> callbackManager;
 
 
-    public DefaultRequest(Callable<T> callable) {
+    public DefaultRequest(Callable<T> callable) throws RejectedExecutionException, NullPointerException {
         super(callable);
         callbackManager = new DefaultCallbackManager<>();
+        EXECUTOR.submit(this);
     }
-
-
-    /**
-     * Enqueues the provided callable to the internal executor service. The
-     * callable may be executed at any time after this method returns.
-     *
-     * @param request The request to enqueue.
-     */
-    public static void enqueue(DefaultRequest<?> request) throws RejectedExecutionException, NullPointerException {
-        EXECUTOR.submit(request);
-    }
-
 
     /**
      * Attaches a success listener to this request. Note that the listener will
@@ -79,6 +66,16 @@ public class DefaultRequest<T> extends FutureTask<T> implements Request<T> {
     public Request<T> withFinishListener(FinishListener listener) {
         callbackManager.addFinishListener(listener);
         return this;
+    }
+
+    /**
+     * Removes all previously added listeners and cancels the task. Note that
+     * no callbacks are expected to be called if this request is cancelled.
+     */
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        callbackManager.terminate();
+        return super.cancel(mayInterruptIfRunning);
     }
 
     /**
