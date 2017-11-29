@@ -33,13 +33,13 @@ public class DefaultCallbackManager<V> implements CallbackManager<V> {
         SUCCESS, ERROR, TERMINATED, NONE
     }
 
+    private final Object finishLock = new Object();
     private final Object successLock = new Object();
     private final Object errorLock = new Object();
-    private final Object finishLock = new Object();
 
+    private ArrayList<FinishListener> finishListeners = new ArrayList<>();
     private ArrayList<SuccessListener<V>> successListeners = new ArrayList<>();
     private ArrayList<ErrorListener> errorListeners = new ArrayList<>();
-    private ArrayList<FinishListener> finishListeners = new ArrayList<>();
 
     private FinishState finishState = FinishState.NONE;
     private Object result = null;
@@ -164,7 +164,7 @@ public class DefaultCallbackManager<V> implements CallbackManager<V> {
      */
     @Override
     public void deliverSuccessOnMainThread(V result) {
-        if (finishState == FinishState.TERMINATED)
+        if (finishState != FinishState.NONE)
             return;
 
         this.finishState = FinishState.SUCCESS;
@@ -202,10 +202,10 @@ public class DefaultCallbackManager<V> implements CallbackManager<V> {
      */
     @Override
     public void deliverErrorOnMainThread(Throwable cause) {
-        if (finishState == FinishState.TERMINATED)
+        if (finishState != FinishState.NONE)
             return;
 
-        this.finishState = FinishState.SUCCESS;
+        this.finishState = FinishState.ERROR;
         this.result = cause;
 
         new Handler(Looper.getMainLooper()).post(() -> {
@@ -244,8 +244,8 @@ public class DefaultCallbackManager<V> implements CallbackManager<V> {
         synchronized (errorLock) {
             errorListeners.clear();
         }
-        synchronized (finishLock) {
-            finishListeners.clear();
+        synchronized (successLock) {
+            successListeners.clear();
         }
     }
 
